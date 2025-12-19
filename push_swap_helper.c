@@ -14,7 +14,7 @@
 
 void	*ft_memcpy(void *dest, const void *src, size_t n_byte)
 {
-    unsigned char 	*d;
+    unsigned char 			*d;
     const unsigned char 	*s;
 
     if (n_byte == 0)
@@ -42,19 +42,28 @@ void	*ft_memcpy(void *dest, const void *src, size_t n_byte)
 
 void	init(int n_elem, int *a)
 {
-	//convention = bit:31-30 = ctrl 
-	//(possible state: 00:free, 01:In_A, 10:In_B, 11:Undefined
-	//bit:29-20 = valeur (0 to 2047 ce qui suffit pour push_swap)
-	//bit:19-10 = Index_prev (pointe vers l'index du noeud suivant)
-	//bit:9-0	= Index_next
 	int i;
+	int	j;
 
-	i = 0;
-	while (i < n_elem)
+	i = MAX_NBR - 1;
+	
+	a[i] = a[i] << VALUE; // on lui attribut sa valeur
+	a[i] |= (MAX_NBR - n_elem);//le dern dela stat-> le premier(next)
+	a[i] |= (IN_A << CTRL);
+	a[i--] |= ((MAX_NBR - 2) << INDEX_PREV);//prev
+	j = 1;
+	while (--n_elem)
 	{
+		a[i] = a[i] << VALUE;
 		a[i] |= (IN_A << CTRL); // set up la bit de controle a IN_A
-		a[i] |= ((i + n_elem - 1) << INDEX_PREV); // il pointe le noeud derriere
-		a[i] |= (i + 1) % n_elem; //le noeud devant
-		i++;
+		a[i] |= ((MAX_NBR - 2 - j) << INDEX_PREV); // il pointe le noeud derrier
+		a[i] |= (MAX_NBR - j);//next
+		j++;
+		i--;
 	}
+	i++;
+	a[i] &= 0xfff003ff;
+	a[i] |= (MAX_NBR - 1) << INDEX_PREV;
 }
+/*498 <- 499 next-> 500 - n_elem
+*/

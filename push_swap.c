@@ -48,15 +48,16 @@ static int	ft_atoi(char **s_ptr, char *s, int base)
 
 int main(int ac, char **av)
 {
-	int		b[MAX_NUMBER_TO_SORT];//max = 512 car on trie pas plus de 500nbr
-	int		a[MAX_NUMBER_TO_SORT];
+	int		b[MAX_NBR];//max = 512 car on trie pas plus de 500nbr
+	int		a[MAX_NBR];
 	int		n_elem; //nbr reel
 	int 	i = 0;
 	int 	j;
+	int		t;
 	int 	count;
-	char	seen[MAX_NUMBER_TO_SORT];
-	t_meta	sa;
-	t_meta	sb; //meta donnees sur les stacks. head et size
+	char	seen[MAX_NBR];
+	t_meta	ssa;
+	t_meta	ssb; //meta donnees sur les stacks. head et size
 
 	n_elem = 0;
 	while (++i < ac)
@@ -70,18 +71,19 @@ int main(int ac, char **av)
 		}
 	}
 	///init struct
-	sa.size = (size_t)n_elem; //full
-	sb.size = 0; //vide
-	sa.head = 0;	//tout en haut
-	sb.head = (size_t)(n_elem - 1); //tout en bas
-	sa.cap = sb.cap = (size_t)n_elem;
-	sa.ifree = sb.ifree = 0;
+	ssa.size = (size_t)n_elem; //full
+	ssb.size = 0; //vide
+	ssa.head = 0;	//tout en haut
+	ssb.head = (size_t)(n_elem - 1); //tout en bas
+	ssa.cap = ssb.cap = (size_t)n_elem;
+	ssa.ifree = ssb.ifree = 0;
 	
 	i = 0;
 	while (i < n_elem)
 		seen[i++] = 0;
-	i = 0;
-	while (i < n_elem)//doublons non traites. mais sorted after anyway..
+	i = n_elem;
+	t = 0;
+	while (--i >= 0)//doublons non traites.
 	{
 		count = 0;
 		j = 0;
@@ -91,20 +93,28 @@ int main(int ac, char **av)
 		if (seen[count])
 			return (write(1, "error", 5));
 		seen[count] = 1;
-		a[i] = count;
-		i++;
+		a[MAX_NBR - 1 - t++] = count;
 	}
+	
+	i = MAX_NBR; t = 0;
 	init(n_elem, a);
-	i = 0;
-	while (i < n_elem)
-		printf("%d\n", a[i++]);
+	while (t++ < n_elem)
+		printf("%d, ", a[MAX_NBR - t]);
 	i = 0;
 	while (i < n_elem)
 		b[i++] = 0;
 }
-// 12 1 24 5 16
-// 2  0  4 1  3
-// 1  5  12 16 24
 
 /// https://github.com/alx-sch/push_swap
+/*
+1078459897:	4	01|00.0000.0100|0111.1111.11|01.1111.1001	504
+1074258426:	0	01|00.0000.0000|0111.1110.00|01.1111.1010	505
+1080550907:	6	01|00.0000.0110|0111.1110.01|01.1111.1011	506
+1076357628:	2	01|00.0000.0010|0111.1110.10|01.1111.1100	507
+1079504381:	5	01|00.0000.0101|0111.1110.11|01.1111.1101	508
+1075311102:	1	01|00.0000.0001|0111.1111.00|01.1111.1110	509
+1081603583:	7	01|00.0000.0111|0111.1111.01|01.1111.1111	510
+1077410296:	3	01|00.0000.0011|0111.1111.10|01.1111.1000	511
 
+				01|00.0000.0000|0000.0011.10|00.0000.0011
+*/
