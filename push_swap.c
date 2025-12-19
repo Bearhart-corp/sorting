@@ -12,7 +12,7 @@
 
 #include "push_swap.h"
 
-int	ft_still_number(char *s)
+static int	ft_still_number(char *s)
 {
 	while (*s)
 	{
@@ -23,7 +23,7 @@ int	ft_still_number(char *s)
 	return (0);
 }
 
-int	ft_atoi(char **s_ptr, char *s, int base)
+static int	ft_atoi(char **s_ptr, char *s, int base)
 {
 	int		sign;
 	int		acc;
@@ -55,8 +55,8 @@ int main(int ac, char **av)
 	int 	j;
 	int 	count;
 	char	seen[MAX_NUMBER_TO_SORT];
-	t_meta	a;
-	t_meta	b; //meta donnees sur les stacks. head et size
+	t_meta	sa;
+	t_meta	sb; //meta donnees sur les stacks. head et size
 
 	n_elem = 0;
 	while (++i < ac)
@@ -70,12 +70,12 @@ int main(int ac, char **av)
 		}
 	}
 	///init struct
-	a.size = n_elem; //full
-	b.size = 0; //vide
-	a.head = 0;	//tout en haut
-	b.head = (n_elem - 1); //tout en bas
-	a.cap = b.cap = n_elem;
-	a.ifree = b.ifree = 0;
+	sa.size = (size_t)n_elem; //full
+	sb.size = 0; //vide
+	sa.head = 0;	//tout en haut
+	sb.head = (size_t)(n_elem - 1); //tout en bas
+	sa.cap = sb.cap = (size_t)n_elem;
+	sa.ifree = sb.ifree = 0;
 	
 	i = 0;
 	while (i < n_elem)
