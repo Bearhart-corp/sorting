@@ -48,6 +48,7 @@ void	rra(t_meta sa, int *a)//le dernier devient le premier, move vers le bas
 void	pa(t_meta *sa, t_meta *sb, int *a, int *b)
 {
 	short	value;
+	short	index_node;
 
 	value = ((b[sb->head] >> VALUE) & MASK);
 	//pop b push sur a
@@ -56,10 +57,24 @@ void	pa(t_meta *sa, t_meta *sb, int *a, int *b)
 		b[sb->head] &= 0x3fffffff; // n'est plus utilise dans A ou B (donc free)
 		sb->free[sb->ifree++] = sb->head; //on le push dans la liste free
 		//celui avant doit pointer vers celui apres et celui apres avant
-		b[b[sb->head] & MASK] &= 0xfff003ff;
-		b[b[sb->head] & MASK] |= ((b[sb->head] >> INDEX_PREV) & MASK);
-		b[((b[sb->head] >> INDEX_PREV) & MASK)] = (b[sb->head] & MASK);
-		
+
+		b[b[sb->head] & MASK] &= 0xfff003ff; // next->prev = 0
+		b[b[sb->head] & MASK] |= ((b[sb->head] >> INDEX_PREV) & MASK)
+		//next->prev = prev;
+		b[((b[sb->head] >> INDEX_PREV) & MASK)] &= 0xfffffc00; //prev->next = 0;
+		b[((b[sb->head] >> INDEX_PREV) & MASK)] |= b[b[sb->head] & MASK];
+		 //prev->next = next;
+		//////////////PUSH
+		//on se met sur le top de la stack free
+		if (sa.ifree > 0)
+			index_node = sa->free[--ifree];
+		a[index_node] |= 0x40000000; //in_a
+		a[index_node] &= 0xfff003ff; //node.prev = 0 then head.prev
+		a[index_node] |= (a[sa->head] >> INDEX_PREV) & MASK;
+		a[sa->head] &= 0xfff003ff; // head.prev = 0
+		a[sa->head] |= index_node;
+		a[index_node] &= 0xfffffc00 // node.next = 0;
+		a[index_node] |= sa->head; // node.next = 0;
 	}
 	else 
 		return (write(1, "error", 5));
