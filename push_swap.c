@@ -103,7 +103,12 @@ int main(int ac, char **av)
 	i = 0;
 	while (i < n_elem)
 		b[i++] = 0;
+	ft_push_swap(ssa, ssb, a, b);
 }
+
+//commentaire l'init semble fonctionner
+//stack commence bien a partir de la fin,le premier elem
+//au'on nous donne devient bien le top de la stack
 
 /// https://github.com/alx-sch/push_swap
 /*

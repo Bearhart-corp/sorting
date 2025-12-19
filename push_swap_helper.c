@@ -12,6 +12,22 @@
 
 #include "push_swap.h"
 
+void	ft_push_swap(t_meta ssa, t_meta ssb, int *a, int *b)
+{
+	/*
+	commence par implementer bubble sort avec tech:
+		push b tous les legers
+		fais ton ping pong sur les 2 stacks a la fois pour rr
+		B doit etre a l'envers !
+		rotate n / 2 les 2 stacks
+		push b (tout) sur a return;
+
+	implementation de radix binaire (tente en 4 coins si possible)
+	implementation du turk algo
+	testing and improvement if its working
+	*/
+}
+
 void	*ft_memcpy(void *dest, const void *src, size_t n_byte)
 {
     unsigned char 			*d;
