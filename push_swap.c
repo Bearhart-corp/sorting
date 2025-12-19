@@ -54,6 +54,7 @@ int main(int ac, char **av)
 	int 	i = 0;
 	int 	j;
 	int 	count;
+	char	seen[MAX_NUMBER_TO_SORT];
 	t_meta	a;
 	t_meta	b; //meta donnees sur les stacks. head et size
 
@@ -74,7 +75,11 @@ int main(int ac, char **av)
 	a.head = 0;	//tout en haut
 	b.head = (n_elem - 1); //tout en bas
 	a.cap = b.cap = n_elem;
+	a.ifree = b.ifree = 0;
 	
+	i = 0;
+	while (i < n_elem)
+		seen[i++] = 0;
 	i = 0;
 	while (i < n_elem)//doublons non traites. mais sorted after anyway..
 	{
@@ -83,6 +88,9 @@ int main(int ac, char **av)
 		while (j < n_elem)
 			if (b[i] > b[j++])
 				count++;
+		if (seen[count])
+			return (write(1, "error", 5));
+		seen[count] = 1;
 		a[i] = count;
 		i++;
 	}
