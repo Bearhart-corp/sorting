@@ -71,11 +71,11 @@ int main(int ac, char **av)
 		}
 	}
 	///init struct
-	ssa.size = (size_t)n_elem; //full
-	ssb.size = 0; //vide
-	ssa.head = 0;	//tout en haut
-	ssb.head = (size_t)(n_elem - 1); //tout en bas
-	ssa.cap = ssb.cap = (size_t)n_elem;
+	ssa.size = (size_t)n_elem; 					//full
+	ssb.size = 0; 								//vide
+	ssa.head = (size_t)(MAX_NBR - 1 - n_elem);	//TOP STACK verif que c 504
+	ssb.head = (size_t)MAX_NBR; 				//tout en bas
+	ssa.cap = ssb.cap = MAX_NBR;
 	ssa.ifree = ssb.ifree = 0;
 	
 	i = 0;
@@ -98,12 +98,12 @@ int main(int ac, char **av)
 	
 	i = MAX_NBR; t = 0;
 	init(n_elem, a);
-	while (t++ < n_elem)
-		printf("%d, ", a[MAX_NBR - t]);
 	i = 0;
 	while (i < n_elem)
 		b[i++] = 0;
 	ft_push_swap(ssa, ssb, a, b);
+	while (t++ < n_elem)
+		printf("%d, ", a[MAX_NBR - t]);
 }
 
 //commentaire l'init semble fonctionner
@@ -121,5 +121,4 @@ int main(int ac, char **av)
 1081603583:	7	01|00.0000.0111|0111.1111.01|01.1111.1111	510
 1077410296:	3	01|00.0000.0011|0111.1111.10|01.1111.1000	511
 
-				01|00.0000.0000|0000.0011.10|00.0000.0011
 */

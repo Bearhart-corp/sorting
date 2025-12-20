@@ -24,7 +24,7 @@
 	//struct : size			:	nb_element actuel
 	//struct : head			:	index du top de la stack
 	//struct : cap			:	taille du buffer
-	//struct : *free_lst	:	list free
+	//struct : *free	:	list free
 	//struct : ifree		:	index en cours de free pour acces O/1
 
 //	define:
