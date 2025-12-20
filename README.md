@@ -1,2 +1,0 @@
-# sorting
-push_swap
