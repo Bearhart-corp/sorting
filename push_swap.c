@@ -71,24 +71,13 @@ int main(int ac, char **av)
 				break ;
 		}
 	}
-	///init struct
-	ssa.size = (size_t)n_elem; 					//full
-	ssb.size = 0; 								//vide
-	ssa.head = (size_t)(MAX_NBR - n_elem);		//TOP STACK verif que c 504
-	ssb.head = (size_t)MAX_NBR; 				//tout en bas
-	ssa.cap = MAX_NBR;
-	ssb.cap = MAX_NBR;
-	ssa.ifree = 0;
-	ssb.ifree = 0;
-	ssa.free[0] = 0;
-	ssb.free[0] = 0;
-	
+	init_meta_data(&ssa, &ssb, n_elem);
 	i = 0;
 	while (i < n_elem)
 		seen[i++] = 0;
 	i = n_elem;
 	t = 0;
-	while (--i >= 0)//doublons non traites.
+	while (--i >= 0)
 	{
 		count = 0;
 		j = 0;
@@ -100,14 +89,29 @@ int main(int ac, char **av)
 		seen[count] = 1;
 		a[MAX_NBR - 1 - t++] = count;
 	}
-	i = MAX_NBR; t = 0;
+	i = MAX_NBR;
+	
+	for (t = 0; t < n_elem;)
+		printf("%d, ", (a[MAX_NBR - 1 - t++]));
+	printf("\n______________________\n");
+
 	init(n_elem, a);
+
+	for (t = 0; t < n_elem; )
+		printf("%d, ", (a[MAX_NBR - 1 - t++]));
+	printf("\n______________________\n");
 	i = 0;
 	while (i < n_elem)
 		b[i++] = 0;
-	ft_push_swap(ssa, ssb, a, b);
-	while (t++ < n_elem)
-		printf("%d, ", a[MAX_NBR - t] >> VALUE & MASK);
+	ft_push_swap(&ssa, &ssb, a, b);
+	
+
+	while(n_elem--)
+	{
+		printf("%d\n", a[ssa.head] >> VALUE & MASK);
+		ssa.head = a[ssa.head] & MASK;
+	}
+
 }
 
 //commentaire l'init semble fonctionner
@@ -125,4 +129,9 @@ int main(int ac, char **av)
 1081603583:	7	01|00.0000.0111|0111.1111.01|01.1111.1111	510
 1077410296:	3	01|00.0000.0011|0111.1111.10|01.1111.1000	511
 
-*/
+				
+				01|00.0000.0001|0111.1111.11|01.1111.1110	509
+				01|00.0000.0000|0111.1111.01|01.1111.1111	510
+				01|00.0000.0010|0111.1111.10|01.1111.1101	511
+				01|00.0000.0000|0111.1111.11|01.1111.1110
+								*/

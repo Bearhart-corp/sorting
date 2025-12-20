@@ -38,22 +38,23 @@ typedef struct s_meta
 ///////// helper classik
 void	*ft_memcpy(void *dest, const void *src, size_t n_byte);
 void	init(int n_elem, int *a);
+void	init_meta_data(t_meta *ssa, t_meta *ssb, int n_elem);
 /////////
 
 ///////// stack helper
 void	pb(t_meta *ssa, t_meta *ssb, int *a, int *b);
 void	pa(t_meta *ssa, t_meta *ssb, int *a, int *b);
-void	ss(t_meta ssa, t_meta ssb, int *b, int *a);
-void	sb(t_meta ssb, int *b);
-void	sa(t_meta ssa, int *a);
-void	rr(t_meta ssa, t_meta ssb, int *a, int *b);
-void	rrr(t_meta ssa, t_meta ssb, int *a, int *b);
-void	rrb(t_meta ssb, int *b);
-void	rb(t_meta ssb, int *b);
-void	rra(t_meta ssa, int *a);
-void	ra(t_meta ssa, int *a);
+void	ss(t_meta *ssa, t_meta *ssb, int *b, int *a);
+void	sb(t_meta *ssb, int *b);
+void	sa(t_meta *ssa, int *a);
+void	rr(t_meta *ssa, t_meta *ssb, int *a, int *b);
+void	rrr(t_meta *ssa, t_meta *ssb, int *a, int *b);
+void	rrb(t_meta *ssb, int *b);
+void	rb(t_meta *ssb, int *b);
+void	rra(t_meta *ssa, int *a);
+void	ra(t_meta *ssa, int *a);
 /////////
-void	ft_push_swap(t_meta ssa, t_meta ssb, int *a, int *b);
-void	algo_3move(t_meta ssa, int *a);
+void	ft_push_swap(t_meta *ssa, t_meta *ssb, int *a, int *b);
+void	algo_3move(t_meta *ssa, int *a);
 
 #endif
