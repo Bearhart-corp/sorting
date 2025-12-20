@@ -121,14 +121,13 @@ void	pa(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	//next->prev = prev;
 	b[(b[ssb->head] >> INDEX_PREV) & MASK] &= 0xfffffc00; //prev->next = 0;
 	b[(b[ssb->head] >> INDEX_PREV) & MASK] |= b[b[ssb->head] & MASK];
+
+	ssb->size--;
 	 //prev->next = next;
 	//////////////PUSH
 	//on se met sur le top de la stack free
-	if (ssa->ifree > 0)
-	{
-		ssa->ifree -= 1;
+	if ((ssa->ifree--) > 0)
 		index_node = ssa->free[ssa->ifree];
-	}
 	a[index_node] |= 0x40000000; //in_a
 	a[index_node] &= 0xfff003ff; //node.prev = 0 then head.prev
 	a[index_node] |= (a[ssa->head] >> INDEX_PREV) & MASK;
@@ -138,6 +137,7 @@ void	pa(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	a[index_node] |= ssa->head; // node.next = 0;
 	a[index_node] &= 0xc00fffff; //value = 0;
 	a[index_node] |= value;
+	ssa->size++;
 }
 
 void	pb(t_meta *ssa, t_meta *ssb, int *a, int *b)
@@ -156,14 +156,12 @@ void	pb(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	//next->prev = prev;
 	a[((a[ssa->head] >> INDEX_PREV) & MASK)] &= 0xfffffc00; //prev->next = 0;
 	a[((a[ssb->head] >> INDEX_PREV) & MASK)] |= a[a[ssa->head] & MASK];
+	ssa->size--;
 	 //prev->next = next;
 	//////////////PUSH
 	//on se met sur le top de la stack free
-	if (ssb->ifree > 0)
-	{
-		ssb->ifree -= 1;
+	if ((ssb->ifree--) > 0)
 		index_node = ssb->free[ssb->ifree];
-	}
 	b[index_node] |= 0x40000000; //in_a
 	b[index_node] &= 0xfff003ff; //node.prev = 0 then head.prev
 	b[index_node] |= (b[ssb->head] >> INDEX_PREV) & MASK;
@@ -173,6 +171,7 @@ void	pb(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	b[index_node] |= ssb->head; // node.next = 0;
 	b[index_node] &= 0xc00fffff; //value = 0;
 	b[index_node] |= value;
+	ssb->size++;
 }
 /*
 DOCUMENTATION DE LA STACK EN BUFFER CIRCULAIRE PSEUDO CHAINEE

@@ -54,5 +54,6 @@ void	rra(t_meta ssa, int *a);
 void	ra(t_meta ssa, int *a);
 /////////
 void	ft_push_swap(t_meta ssa, t_meta ssb, int *a, int *b);
+void	algo_3move(t_meta ssa, int *a);
 
 #endif

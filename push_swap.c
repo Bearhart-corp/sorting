@@ -51,7 +51,7 @@ int main(int ac, char **av)
 	int		b[MAX_NBR];//max = 512 car on trie pas plus de 500nbr
 	int		a[MAX_NBR];
 	int		n_elem; //nbr reel
-	int 	i = 0;
+	int 	i;
 	int 	j;
 	int		t;
 	int 	count;
@@ -59,6 +59,7 @@ int main(int ac, char **av)
 	t_meta	ssa;
 	t_meta	ssb; //meta donnees sur les stacks. head et size
 
+	i = 0;
 	n_elem = 0;
 	while (++i < ac)
 	{
@@ -73,10 +74,14 @@ int main(int ac, char **av)
 	///init struct
 	ssa.size = (size_t)n_elem; 					//full
 	ssb.size = 0; 								//vide
-	ssa.head = (size_t)(MAX_NBR - 1 - n_elem);	//TOP STACK verif que c 504
+	ssa.head = (size_t)(MAX_NBR - n_elem);		//TOP STACK verif que c 504
 	ssb.head = (size_t)MAX_NBR; 				//tout en bas
-	ssa.cap = ssb.cap = MAX_NBR;
-	ssa.ifree = ssb.ifree = 0;
+	ssa.cap = MAX_NBR;
+	ssb.cap = MAX_NBR;
+	ssa.ifree = 0;
+	ssb.ifree = 0;
+	ssa.free[0] = 0;
+	ssb.free[0] = 0;
 	
 	i = 0;
 	while (i < n_elem)
@@ -95,7 +100,6 @@ int main(int ac, char **av)
 		seen[count] = 1;
 		a[MAX_NBR - 1 - t++] = count;
 	}
-	
 	i = MAX_NBR; t = 0;
 	init(n_elem, a);
 	i = 0;
@@ -103,7 +107,7 @@ int main(int ac, char **av)
 		b[i++] = 0;
 	ft_push_swap(ssa, ssb, a, b);
 	while (t++ < n_elem)
-		printf("%d, ", a[MAX_NBR - t]);
+		printf("%d, ", a[MAX_NBR - t] >> VALUE & MASK);
 }
 
 //commentaire l'init semble fonctionner
