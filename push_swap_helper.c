@@ -20,7 +20,7 @@
 		ifree	//spx free
 */
 
-void	algo_3move(t_meta *ssa, int *a)//MARCHE QUE SI NORMALISE
+void	algo_3move(t_meta *ssa, int *a)//MARCHE QUE SI NORMALISE et size = 3
 {
 	int	i;
 
@@ -35,10 +35,7 @@ void	algo_3move(t_meta *ssa, int *a)//MARCHE QUE SI NORMALISE
 	if ((a[i] >> VALUE & MASK) == 2)
 	{
 		if ((a[a[i] & MASK] >> VALUE & MASK) == 0)
-		{
-			
 			return (ra(ssa, a));
-		}
 		sa(ssa, a);
 		return (rra(ssa, a));
 	}
@@ -67,48 +64,70 @@ void	ft_push_swap(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	i = ssa->size;
 	if (i < 4)
 		return (algo_3move(ssa, a));
-	while (i-- > 0)
+	while (ssa->size > (i / 2)) //la size est VARIABLE, modifie par pb et pa !
 	{
-		if (a[ssa->head] < ssa->size / 2)
+		if ((a[ssa->head] >> VALUE & MASK) < (i / 2))
 			pb(ssa, ssb, a, b);
-		ra(ssa, a);
+		else
+			ra(ssa, a);
 	}
-	
-	noteven = ssa->size & 1; //size aka n_elem is pair ?
-	i = ssa->size / 2;
-	
+	noteven = i & 1; //i aka n_elem is odd ?
+	i = ssa->size; // si size de 4 maintenant elle vaut 2 !
 	while (i > 1)
 	{
 		j = --i; //pour i = 4 depart i:3 et j:3 then i:2 et j:2
 		while (i-- > 0)
 		{
-			if (a[ssa->head] > a[a[ssa->head & MASK]])//next
+			if ((a[ssa->head] >> VALUE & MASK) > (a[a[ssa->head] & MASK]
+						>> VALUE & MASK))//next
 			{
-				if (b[ssb->head] < b[b[ssb->head & MASK]]) //reverse !!
+				if ((b[ssb->head] >> VALUE & MASK) < (b[b[ssb->head] & MASK]
+								>> VALUE & MASK)) //reverse !!
 					ss(ssa, ssb, a, b);
 				else
+				{
+					
 					sa(ssa, a);
+				}
 			}
-			else if (b[ssb->head] < b[b[ssb->head & MASK]])
+			else if ((b[ssb->head] >> VALUE & MASK) < (b[b[ssb->head] & MASK]
+							>> VALUE & MASK))
 				sb(ssb, b);
 			rr(ssa, ssb, a, b);
 		}
 		i = j;
 		while ((i-- - noteven) > 0)//pong, on part dans l'autre sens
 		{ //si pair
-			if (a[ssa->head] < a[a[ssa->head & (MASK << 10)]])//prev
+			if ((a[ssa->head] >> VALUE & MASK) < (a[a[ssa->head] & MASK]
+						>> VALUE & MASK))//prev
 			{
-				if (b[ssb->head] > b[b[ssb->head & (MASK << 10)]]) //reverse !!
+				if ((b[ssb->head] >> VALUE & MASK) > (b[b[ssb->head] & MASK]
+								>> VALUE & MASK)) //reverse !!
 					ss(ssa, ssb, a, b);
 				else
 					sa(ssa, a);
 			}
-			else if (b[ssb->head] > b[b[ssb->head & (MASK << 10)]])
+			else if ((b[ssb->head] >> VALUE & MASK) > (b[b[ssb->head] & MASK]
+							>> VALUE & MASK))
 				sb(ssb, b);
 			rrr(ssa, ssb, a, b);
 		}
+		printf("stack A\n");
+		for(int p = 0; p < 2; p++)
+		{
+			printf("%d:%d\n",p , (a[ssa->head] >> VALUE ) & MASK);
+			ssa->head = a[ssa->head] & MASK;
+		}
+		printf("stack B\n");
+		for(int p = 0; p < 2; p++)
+		{
+			printf("%d:%d\n",p , (b[ssb->head] >> VALUE ) & MASK);
+			ssb->head = b[ssb->head] & MASK;
+		}
+		exit(1);
 	}
-	while ((ssa->size-- - noteven) > 0)
+
+	while (ssb->size > 0)
 		pa(ssa, ssb, a, b);
 	/*
 	commence par implementer bubble sort avec tech:
@@ -161,8 +180,8 @@ void	init_meta_data(t_meta *ssa, t_meta *ssb, int n_elem)
 	ssb->head = (size_t)MAX_NBR; 				//tout en bas
 	ssa->cap = MAX_NBR;
 	ssb->cap = MAX_NBR;
-	ssa->ifree = 0;
-	ssb->ifree = MAX_NBR - 1;
+	ssa->ifree = 0;				//vide et commence a 0
+	ssb->ifree = MAX_NBR - 1;	//pleine et commence a max - 1 
 	ssa->free[0] = 0;
 	while (++i < MAX_NBR)
 		ssb->free[i] = i;

@@ -72,16 +72,13 @@ void	rr(t_meta *ssa, t_meta *ssb, int *a, int *b)
 void	sa(t_meta *ssa, int *a)
 {
 	short	next;
-	int	tmp;
+	int		tmp;
 
 	if (ssa->size < 2)
 		return ;
-	next = (a[ssa->head & MASK] & MASK); //next = head.next
-	if (a[ssa->head] == a[next])
-		return ;
+	next = (a[ssa->head] & MASK); //next = head.next
 	tmp = a[ssa->head] & 0x3ff00000; // recup de .value a son index 
-	a[ssa->head] = (a[ssa->head] & 0xc00fffff);
-	a[ssa->head] |= (next & 0x3ff00000);
+	a[ssa->head] = (a[ssa->head] & 0xc00fffff) | (a[next] & 0x3ff00000);
 	//head.value = next.value
 	a[next] = (a[next] & 0xc00fffff) | tmp;// next.value = .value
 }
@@ -94,10 +91,8 @@ void	sb(t_meta *ssb, int *b)
 	if (ssb->size < 2)
 		return ;
 	next = b[ssb->head & MASK];
-	if (b[ssb->head] == b[next])
-		return ;
 	tmp = b[ssb->head] & 0x3ff00000; 
-	b[ssb->head] = (b[ssb->head] & 0xc00fffff) | (next & 0x3ff00000);
+	b[ssb->head] = (b[ssb->head] & 0xc00fffff) | (b[next] & 0x3ff00000);
 	b[next] = (b[next] & 0xc00fffff) | tmp;
 }
 
@@ -109,7 +104,7 @@ void	ss(t_meta *ssa, t_meta *ssb, int *b, int *a)
 
 void	pa(t_meta *ssa, t_meta *ssb, int *a, int *b)
 {
-	short	value;
+	int		value;
 	short	index_node;
 
 	value = (b[ssb->head] & 0x3ff00000);
@@ -122,13 +117,17 @@ void	pa(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	//next->prev = prev;
 	b[(b[ssb->head] >> INDEX_PREV) & MASK] &= 0xfffffc00; //prev->next = 0;
 	b[(b[ssb->head] >> INDEX_PREV) & MASK] |= b[b[ssb->head] & MASK];
-
+	//comme on a pop on head = head->next
+	ssb->head = b[ssb->head] & MASK;
 	ssb->size--;
-	 //prev->next = next;
 	//////////////PUSH
 	//on se met sur le top de la stack free
-	if ((ssa->ifree--) > 0)
-		index_node = ssa->free[ssa->ifree];
+	if ((ssa->ifree--) <= 0)				//oui la stack free est a l'envers..
+	{
+		write(1, "PA: Attempted to create a new node on a full list.\n", 51);
+		exit(1);
+	}
+	index_node = ssa->free[ssa->ifree];
 	a[index_node] |= 0x40000000; //in_a
 	a[index_node] &= 0xfff003ff; //node.prev = 0 then head.prev
 	a[index_node] |= (a[ssa->head] >> INDEX_PREV) & MASK;
@@ -138,15 +137,16 @@ void	pa(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	a[index_node] |= ssa->head; // node.next = 0;
 	a[index_node] &= 0xc00fffff; //value = 0;
 	a[index_node] |= value;
+	ssb->head = index_node;
 	ssa->size++;
 }
 
 void	pb(t_meta *ssa, t_meta *ssb, int *a, int *b)
 {
-	short	value;
+	int		value;
 	short	index_node;
 
-	value = (b[ssb->head] & 0x3ff00000);
+	value = (a[ssa->head] & 0x3ff00000);
 	a[ssa->head] &= 0x3fffffff; // n'est plus utilise dans A ou B (donc free)
 	ssa->free[ssa->ifree++] = ssa->head; //on le push dans la liste free
 	a[a[ssa->head] & MASK] &= 0xfff003ff; // next->prev = 0
@@ -154,12 +154,17 @@ void	pb(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	//next->prev = prev;
 	a[((a[ssa->head] >> INDEX_PREV) & MASK)] &= 0xfffffc00; //prev->next = 0;
 	a[((a[ssb->head] >> INDEX_PREV) & MASK)] |= a[a[ssa->head] & MASK];
+	ssa->head = a[ssa->head] & MASK;
 	ssa->size--;
 	 //prev->next = next;
 	//////////////PUSH
 	//on se met sur le top de la stack free
-	if ((ssb->ifree--) > 0)
-		index_node = ssb->free[ssb->ifree];
+	if ((ssb->ifree--) <= 0)
+	{
+		write(1, "PB: Attempted to create a new node on a full list.\n", 51);
+		exit(1);
+	}
+	index_node = ssb->free[ssb->ifree];
 	b[index_node] |= 0x40000000; //in_a
 	b[index_node] &= 0xfff003ff; //node.prev = 0 then head.prev
 	b[index_node] |= (b[ssb->head] >> INDEX_PREV) & MASK;
@@ -169,9 +174,23 @@ void	pb(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	b[index_node] |= ssb->head; // node.next = 0;
 	b[index_node] &= 0xc00fffff; //value = 0;
 	b[index_node] |= value;
+	ssb->head = index_node;		//tete pointe sur le noeud cree
 	ssb->size++;
 }
 /*
 DOCUMENTATION DE LA STACK EN BUFFER CIRCULAIRE PSEUDO CHAINEE
 
+
+la stack free commence tout en haut a 0 et monte en faisant ++
+quand on pop une valeur de la liste pour allouer un nouveau noeud
+on decremente juste avant, si on push on ++ le head de la stack apres avoir
+desallouer, donc si il m'y a rien dans la liste comme c'est le cas au debut avec 
+A car elle est 100% allouer, la tete de lecture pointe sur l'index 0
+si on push sur B alors on dessaloue sur A et on ajoute la valeur a 
+l'index 0 puis on ++ la tete.
+du coup quand on pop et qu'on veut allouer un nouveau noeud on 
+-- la tete de lecture pour revenir a 0 dans cet exemple et on recupere la valeur
+puis on peut repeter l'operation autant de * que necessaire. 
 */
+
+
