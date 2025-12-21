@@ -110,24 +110,26 @@ void	pa(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	value = (b[ssb->head] & 0x3ff00000);
 	//pop b push sur a
 	b[ssb->head] &= 0x3fffffff; // n'est plus utilise dans A ou B (donc free)
-	ssb->free[ssb->ifree++] = ssb->head; //on le push dans la liste free
-
+	ssb->ifree--;
+	ssb->free[ssb->ifree] = ssb->head; //on le push dans la liste free
+	//on -- first car commence a max_nbr et fini a 0
 	b[b[ssb->head] & MASK] &= 0xfff003ff; // next->prev = 0
 	b[b[ssb->head] & MASK] |= ((b[ssb->head] >> INDEX_PREV) & MASK);
 	//next->prev = prev;
 	b[(b[ssb->head] >> INDEX_PREV) & MASK] &= 0xfffffc00; //prev->next = 0;
-	b[(b[ssb->head] >> INDEX_PREV) & MASK] |= b[b[ssb->head] & MASK];
+	b[(b[ssb->head] >> INDEX_PREV) & MASK] |= b[ssb->head] & MASK;
 	//comme on a pop on head = head->next
 	ssb->head = b[ssb->head] & MASK;
 	ssb->size--;
 	//////////////PUSH
 	//on se met sur le top de la stack free
-	if ((ssa->ifree--) <= 0)				//oui la stack free est a l'envers..
+	if ((ssa->ifree) >= MAX_NBR)
 	{
 		write(1, "PA: Attempted to create a new node on a full list.\n", 51);
 		exit(1);
 	}
 	index_node = ssa->free[ssa->ifree];
+	ssa->ifree++;
 	a[index_node] |= 0x40000000; //in_a
 	a[index_node] &= 0xfff003ff; //node.prev = 0 then head.prev
 	a[index_node] |= (a[ssa->head] >> INDEX_PREV) & MASK;
@@ -137,7 +139,7 @@ void	pa(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	a[index_node] |= ssa->head; // node.next = 0;
 	a[index_node] &= 0xc00fffff; //value = 0;
 	a[index_node] |= value;
-	ssb->head = index_node;
+	ssa->head = index_node;
 	ssa->size++;
 }
 
@@ -148,23 +150,25 @@ void	pb(t_meta *ssa, t_meta *ssb, int *a, int *b)
 
 	value = (a[ssa->head] & 0x3ff00000);
 	a[ssa->head] &= 0x3fffffff; // n'est plus utilise dans A ou B (donc free)
-	ssa->free[ssa->ifree++] = ssa->head; //on le push dans la liste free
+	ssa->ifree--;
+	ssa->free[ssa->ifree] = ssa->head; //on le push dans la liste free
 	a[a[ssa->head] & MASK] &= 0xfff003ff; // next->prev = 0
 	a[a[ssa->head] & MASK] |= ((a[ssa->head] >> INDEX_PREV) & MASK);
 	//next->prev = prev;
-	a[((a[ssa->head] >> INDEX_PREV) & MASK)] &= 0xfffffc00; //prev->next = 0;
-	a[((a[ssb->head] >> INDEX_PREV) & MASK)] |= a[a[ssa->head] & MASK];
+	a[(a[ssa->head] >> INDEX_PREV) & MASK] &= 0xfffffc00; //prev->next = 0;
+	a[(a[ssb->head] >> INDEX_PREV) & MASK] |= a[ssa->head] & MASK;
 	ssa->head = a[ssa->head] & MASK;
 	ssa->size--;
 	 //prev->next = next;
 	//////////////PUSH
 	//on se met sur le top de la stack free
-	if ((ssb->ifree--) <= 0)
+	if ((ssb->ifree) >= MAX_NBR)
 	{
 		write(1, "PB: Attempted to create a new node on a full list.\n", 51);
 		exit(1);
 	}
 	index_node = ssb->free[ssb->ifree];
+	ssb->ifree += 1;
 	b[index_node] |= 0x40000000; //in_a
 	b[index_node] &= 0xfff003ff; //node.prev = 0 then head.prev
 	b[index_node] |= (b[ssb->head] >> INDEX_PREV) & MASK;
@@ -174,7 +178,7 @@ void	pb(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	b[index_node] |= ssb->head; // node.next = 0;
 	b[index_node] &= 0xc00fffff; //value = 0;
 	b[index_node] |= value;
-	ssb->head = index_node;		//tete pointe sur le noeud cree
+	ssb->head = index_node;	//tete pointe sur le noeud cree
 	ssb->size++;
 }
 /*
@@ -192,5 +196,3 @@ du coup quand on pop et qu'on veut allouer un nouveau noeud on
 -- la tete de lecture pour revenir a 0 dans cet exemple et on recupere la valeur
 puis on peut repeter l'operation autant de * que necessaire. 
 */
-
-

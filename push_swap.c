@@ -105,14 +105,6 @@ int main(int ac, char **av)
 	while (i < n_elem)
 		b[i++] = 0;
 	ft_push_swap(&ssa, &ssb, a, b);
-	
-
-	while(n_elem--)
-	{
-		printf("%d\n", a[ssa.head] >> VALUE & MASK);
-		ssa.head = a[ssa.head] & MASK;
-	}
-
 }
 
 //commentaire l'init semble fonctionner
