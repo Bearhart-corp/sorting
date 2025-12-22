@@ -107,6 +107,7 @@ int main(int ac, char **av)
 		printf("\t Next = %hd\n", (a[MAX_NBR - n_elem + t].next));
 	}
 	printf("\n______________________\n");
+	
 	i = 0;
 	while (i < n_elem)
 		b[i++].val = 0;

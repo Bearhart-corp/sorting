@@ -55,6 +55,24 @@ void	algo_3move(t_meta *ssa, t_stack *a)//MARCHE QUE SI NORMALISE et size = 3
 	//102	->	sa
 }
 
+void	ft_print_stack(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
+{
+		printf("\n\tETAT STACK A\n\n");
+		for(int p = 0; p < ssa.size; p++)
+		{
+			printf("\t[%zu]", ssa.head);
+			printf("\t= %d\n" , a[ssa.head].val);
+			ssa.head = a[ssa.head].next;
+		}
+		printf("\n\tETAT STACK B\n\n");
+		for(int p = 0; p < ssb.size; p++)
+		{
+			printf("\t[%zu]", ssb.head);
+			printf("\t= %d\n" , b[ssb.head].val);
+			ssb.head = b[ssb.head].next;
+		}
+}
+
 void	ft_push_swap(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 {
 	int		i;
@@ -64,73 +82,44 @@ void	ft_push_swap(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 	i = ssa->size;
 	if (i < 4)
 		return (algo_3move(ssa, a));
-	/*while (ssa->size > (i / 2)) //la size est VARIABLE, modifie par pb et pa !
+	while (ssa->size > (i / 2)) //la size est VARIABLE, modifie par pb et pa !
 	{
-		if ((a[ssa->head] >> VALUE & MASK) < (i / 2))
-		{
-			printf("\n\tpb\n\n");
+		if (a[ssa->head].val < (i / 2))
 			pb(ssa, ssb, a, b);
-		}
 		else
-		{
-			printf("\n\tra\n\n");
 			ra(ssa, a);
-		}
-
-		printf("\tA\n\n");
-		for(int p = 0; p < 4; p++)
-		{
-			if((a[511 - p] & 0xc0000000) > 0)
-			{
-				printf("\ti:[%d]", 511 - p);
-				printf("\t= %d\n" , a[511 - p] >> VALUE & MASK);
-			}
-		}
-		printf("\ttop->%zu\n", ssa->head);
-		printf("\tB\n\n");
-		for(int p = 0; p < 2; p++)
-		{
-			if((b[p] & 0xc0000000) > 0)
-			{
-				printf("\ti:[%d]",  p);
-				printf("\t= %d\n", b[ p] >> VALUE & MASK);
-			}
-		}
-		printf("\ttop->%zu\n\n", ssb->head);
-		printf("\n_____________________\n");
-	}*/
+	}
 	noteven = i & 1; //i aka n_elem is odd ?
 	i = 0;
 	j = 0;
-	while (j < (ssa->size / 2) + noteven)
+	while (j < (ssa->size) + noteven)
 	{
-		while (++i < ssa->size - j)
+		i = 0;
+		while (++i < (ssa->size))
 		{
 			if (a[ssa->head].val > a[a[ssa->head].next].val)
+			{
 				sa(ssa, a);
-			ra(ssa, a);
+			}
+			if (b[ssb->head].val < b[b[ssb->head].next].val)
+			{
+				sb(ssb, b);
+			}
+			rr(ssa, ssb, a, b);
 		}
-		while (--i > 0 + j)
-		{
-			if (a[ssa->head].val > a[a[ssa->head].next].val)
-				sa(ssa, a);
-			rra(ssa, a);
-		}
+		rr(ssa, ssb, a, b);
+		
 		j++;
 	}
-	while (a[ssa->head].val != 0)
-		ra(ssa, a);
-	printf("top = [%zu]\n",ssa->head );
 
-
-	printf("\n\tETAT STACK A APRES TRIE\n\n");
-		for(int p = 0; p < ssa->size; p++)
-		{
-			printf("\t[%zu]", ssa->head);
-			printf("\t= %d\n" , a[ssa->head].val);
-			ssa->head = a[ssa->head].next;
-		}
-
+	while (b[ssb->head].val != 0)
+		rb(ssb, b);
+	i = 0;
+	while (i++ < ssa->size)
+		ra(ssa, a); //car lelem le+ petit est forcement size or size - 1
+	while (ssb->size)
+		pa(ssa, ssb, a, b);
+ft_print_stack(*ssa, *ssb, a, b);
 	
 	
 	/*
@@ -186,27 +175,29 @@ void	init_meta_data(t_meta *ssa, t_meta *ssb, int n_elem)
 
 /*
 
-printf("pa\nap stack A\n");
-		for(int p = 0; p < 4; p++)
-		{
-			if((a[511 - p] & 0xc0000000) > 0)
-			{
-				printf("i:[%d]\n", 511 - p);
-				printf("%d\n" , a[511 - p] >> VALUE & MASK);
-			}
-		}
-		printf("ap stack B\n");
-		for(int p = 0; p < MAX_NBR; p++)
-		{
-			if((b[511 - p] & 0xc0000000) > 0)
-			{
-				printf("i:[%d]\n", 511 - p);
-				printf("%d\n", b[511 - p] >> VALUE & MASK);
-			}
-		}
-		printf("\n_____________________\n");
+BUBBLE SIMPLE
 
-
+	noteven = i & 1; //i aka n_elem is odd ?
+	i = 0;
+	j = 0;
+	while (j < (ssa->size / 2) + noteven)
+	{
+		while (++i < ssa->size - j)
+		{
+			if (a[ssa->head].val > a[a[ssa->head].next].val)
+				sa(ssa, a);
+			ra(ssa, a);
+		}
+		while (--i > 0 + j)
+		{
+			if (a[ssa->head].val > a[a[ssa->head].next].val)
+				sa(ssa, a);
+			rra(ssa, a);
+		}
+		j++;
+	}
+	while (a[ssa->head].val != 0)
+		ra(ssa, a); //infinite avec le nouvel algo car aucun 0 dans A! ^^
 
 		//////////BUBBLE AMELIORER
 
