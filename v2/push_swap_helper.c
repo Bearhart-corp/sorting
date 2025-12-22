@@ -20,26 +20,26 @@
 		ifree	//spx free
 */
 
-void	algo_3move(t_meta *ssa, int *a)//MARCHE QUE SI NORMALISE et size = 3
+void	algo_3move(t_meta *ssa, t_stack *a)//MARCHE QUE SI NORMALISE et size = 3
 {
 	int	i;
 
 	i = ssa->head;			//tete doit etre sur le top
-	if ((a[i] >> VALUE & MASK) == 0)
+	if (a[i].val == 0)
 	{	
-		if ((a[a[i] & MASK] >> VALUE & MASK) == 1) //si next = 1 
+		if (a[a[i].next].val == 1) //si next = 1 
 			return ;				//deja triee
 		rra(ssa, a);
 		return (sa(ssa, a));
 	}								//bottom = a droite !
-	if ((a[i] >> VALUE & MASK) == 2)
+	if (a[a[i].next].val == 2)
 	{
-		if ((a[a[i] & MASK] >> VALUE & MASK) == 0)
+		if (a[a[i].next].val == 0)
 			return (ra(ssa, a));
 		sa(ssa, a);
 		return (rra(ssa, a));
 	}
-	if ((a[a[i] & MASK] >> VALUE & MASK) == 0)
+	if (a[a[i].next].val == 0)
 		return (sa(ssa, a));
 	return (rra(ssa, a));
 
@@ -55,7 +55,7 @@ void	algo_3move(t_meta *ssa, int *a)//MARCHE QUE SI NORMALISE et size = 3
 	//102	->	sa
 }
 
-void	ft_push_swap(t_meta *ssa, t_meta *ssb, int *a, int *b)
+void	ft_push_swap(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 {
 	int		i;
 	int		j;
@@ -106,31 +106,29 @@ void	ft_push_swap(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	{
 		while (++i < ssa->size - j)
 		{
-			if ((a[ssa->head] >> VALUE & MASK) > (a[a[ssa->head] & MASK]
-							>> VALUE & MASK))
+			if (a[ssa->head].val > a[a[ssa->head].next].val)
 				sa(ssa, a);
 			ra(ssa, a);
 		}
 		while (--i > 0 + j)
 		{
-			if ((a[ssa->head] >> VALUE & MASK) > (a[a[ssa->head] & MASK]
-							>> VALUE & MASK))
+			if (a[ssa->head].val > a[a[ssa->head].next].val)
 				sa(ssa, a);
 			rra(ssa, a);
 		}
 		j++;
 	}
-	
+	while (a[ssa->head].val != 0)
+		ra(ssa, a);
+	printf("top = [%zu]\n",ssa->head );
 
 
-	printf("\tA\n\n");
-		for(int p = 0; p < 20; p++)
+	printf("\n\tETAT STACK A APRES TRIE\n\n");
+		for(int p = 0; p < ssa->size; p++)
 		{
-			if((a[511 - p] & 0xc0000000) > 0)
-			{
-				printf("\ti:[%d]", 511 - p);
-				printf("\t= %d\n" , a[511 - p] >> VALUE & MASK);
-			}
+			printf("\t[%zu]", ssa->head);
+			printf("\t= %d\n" , a[ssa->head].val);
+			ssa->head = a[ssa->head].next;
 		}
 
 	
@@ -149,30 +147,22 @@ void	ft_push_swap(t_meta *ssa, t_meta *ssb, int *a, int *b)
 	*/
 }
 
-void	init(int n_elem, int *a)
+void	init(int n_elem, t_stack *a)
 {
 	int i;
 	int	j;
 
 	i = MAX_NBR - 1;
-	
-	a[i] = a[i] << VALUE; // on lui attribut sa valeur
-	a[i] |= (MAX_NBR - n_elem);//le dern dela stat-> le premier(next)
-	a[i] |= (IN_A << CTRL);
-	a[i--] |= ((MAX_NBR - 2) << INDEX_PREV);//prev
-	j = 1;
+	j = 0;
+	a[i].next = MAX_NBR - n_elem;
 	while (--n_elem)
 	{
-		a[i] = a[i] << VALUE;
-		a[i] |= (IN_A << CTRL); // set up la bit de controle a IN_A
-		a[i] |= ((MAX_NBR - 2 - j) << INDEX_PREV); // il pointe le noeud derrier
-		a[i] |= (MAX_NBR - j);//next
+		a[i--].prev = (MAX_NBR - 2 - j);
+		a[i].next = ((MAX_NBR - 1 - j) % MAX_NBR);
 		j++;
-		i--;
 	}
-	i++;
-	a[i] &= 0xfff003ff;
-	a[i] |= (MAX_NBR - 1) << INDEX_PREV; //on le fait pointer vers le dernier
+	a[i].next = MAX_NBR - j;
+	a[i].prev = MAX_NBR - 1; //on le fait pointer vers le dernier
 }
 
 void	init_meta_data(t_meta *ssa, t_meta *ssb, int n_elem)
