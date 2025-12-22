@@ -78,18 +78,20 @@ void	ft_push_swap(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 	int		i;
 	int		j;
 	char	noteven;
+	int 	count;
 
+	count = 0;
 	i = ssa->size;
+	noteven = i & 1; //i aka n_elem is odd ?
 	if (i < 4)
 		return (algo_3move(ssa, a));
-	while (ssa->size > (i / 2)) //la size est VARIABLE, modifie par pb et pa !
+	while (ssa->size > (i / 2) + noteven) //la size est VARIABLE, modifie par pb et pa !
 	{
 		if (a[ssa->head].val < (i / 2))
 			pb(ssa, ssb, a, b);
 		else
 			ra(ssa, a);
 	}
-	noteven = i & 1; //i aka n_elem is odd ?
 	i = 0;
 	j = 0;
 	while (j < (ssa->size) + noteven)
@@ -97,29 +99,49 @@ void	ft_push_swap(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 		i = 0;
 		while (++i < (ssa->size))
 		{
-			if (a[ssa->head].val > a[a[ssa->head].next].val)
+			if (a[ssa->head].val > a[a[ssa->head].next].val
+				&& (b[ssb->head].val < b[b[ssb->head].next].val))
 			{
+				ss(ssa, ssb, a ,b);
+				count++;
+			}
+			else if (a[ssa->head].val > a[a[ssa->head].next].val)
+			{
+				count++;
 				sa(ssa, a);
 			}
-			if (b[ssb->head].val < b[b[ssb->head].next].val)
+			else if (b[ssb->head].val < b[b[ssb->head].next].val)
 			{
+				count++;
 				sb(ssb, b);
 			}
+			count++;
 			rr(ssa, ssb, a, b);
 		}
+		count++;
 		rr(ssa, ssb, a, b);
-		
 		j++;
 	}
 
-	while (b[ssb->head].val != 0)
+	while (b[ssb->head].val != ssb->size - 1)
+	{
+		count++;
 		rb(ssb, b);
+	}
 	i = 0;
 	while (i++ < ssa->size)
+	{
+		count++;
 		ra(ssa, a); //car lelem le+ petit est forcement size or size - 1
+	}
+	
 	while (ssb->size)
+	{
+		count++;
 		pa(ssa, ssb, a, b);
-ft_print_stack(*ssa, *ssb, a, b);
+	}
+	ft_print_stack(*ssa, *ssb, a, b);
+	printf("count = %d\n", count);
 	
 	
 	/*
