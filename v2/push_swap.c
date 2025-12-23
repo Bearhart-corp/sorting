@@ -95,9 +95,9 @@ int main(int ac, char **av)
 	for (t = 0; t < n_elem;)
 		printf("%d, ", (a[MAX_NBR - 1 - t++].val));
 	printf("TOP");
-	printf("\n______________________\n\n");
+	
 
-	init(n_elem, a);
+	init(n_elem, a, b);
 	printf("\n\n\tCHECK DE L'INIT\n\n");
 	for (t = 0; t < n_elem; t++ )
 	{
@@ -106,12 +106,15 @@ int main(int ac, char **av)
 		printf("\t Prev = %hd", (a[MAX_NBR - n_elem + t].prev));
 		printf("\t Next = %hd\n", (a[MAX_NBR - n_elem + t].next));
 	}
-	printf("\n______________________\n");
-	
-	i = 0;
-	while (i < n_elem)
-		b[i++].val = 0;
+
 	ft_push_swap(&ssa, &ssb, a, b);//here we assign A to by the sorted one
+	
 }
 
 /// https://github.com/alx-sch/push_swap
+/*
+500 * 500 	= 250000
+500 * 23  	= 11500
+500 * 8 	= 4000 
+*/
+

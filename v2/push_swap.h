@@ -10,21 +10,24 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
-# define MAX_NBR 0x200
+# include <unistd.h>
+# include <stdio.h>
+# include <stdint.h>
+# include <stdlib.h>
+# ifndef MAX_NBR
+#  define MAX_NBR 0x200
+# endif
 
 typedef struct s_meta
 {
 	size_t		size;
 	size_t		head;
-	size_t		cap;
-	uint16_t	free[0x800]; //cap max 2047
+	size_t		start;
+	size_t		start_l;
+	size_t		end_l;
+	uint16_t	free[MAX_NBR];
 	size_t		ifree;
 }	t_meta;
 
@@ -36,8 +39,9 @@ typedef struct s_stack
 }	t_stack;
 
 ///////// helper classik
-void	init(int n_elem, t_stack *a);
+void	init(int n_elem, t_stack *a, t_stack *b);
 void	init_meta_data(t_meta *ssa, t_meta *ssb, int n_elem);
+void	ft_print_stack(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b);
 /////////
 
 ///////// stack helper
