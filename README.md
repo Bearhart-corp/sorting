@@ -38,10 +38,12 @@ Néanmoins il faut que cela colle avec la règle B hold les 1 et A les 0 (INVARI
 
 LET'S GOOOOO BUDDDYYYYY !!!
 
-visualisation: pour  1,4,3,0,2 le turk prend 18 coups et le merge éparnié était gratuit donc moins d'opti sur ce point
+visualisation: pour  1,4,3,0,2 le turk prend 18 coups et le merge épargné était gratuit donc moins d'opti sur ce point
 avec le radix meme opti:
 SI CHUNK DANS B alors on inverse pour que le push a soit dans l'ordre croissant !
 B hold toujours les 1 et A les 0 car sinon la réinsertion est trop couteuse (rrb, pa * n element !) contre juste un pa (on /2 les couts)
+
+B:
 f(0) f(1) f2   f3   
 001  001  011  011   
 100  011  010  010
@@ -49,7 +51,7 @@ f(0) f(1) f2   f3
 000  000  100  000
 010  010  000  100
 
-          
+A:          
 010  000  001
 000  100  010
 100  001  011
