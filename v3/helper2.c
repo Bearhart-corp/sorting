@@ -78,7 +78,9 @@ void	ft_push_swap(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 		ssa->start_l = ssa->head;
 	}
 	else
+	{
 		cocktail(ssa, ssb, a, b);
-	printf("cost: %zu\n", ssa->count);
+	}
+	printf("\n\tcost: %zu\n", ssa->count);
 	ft_print_stack(*ssa, *ssb, a, b);
 }

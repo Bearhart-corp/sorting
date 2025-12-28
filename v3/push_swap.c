@@ -32,19 +32,14 @@ static int normalizator(t_main *s, int n_elem, t_stack *a, t_stack *b)
 	return (0);
 }
 
-int main(int ac, char **av)
+static long fonct(t_main s, t_stack *b, int ac, char **av)
 {
-	t_stack	b[MAX_NBR];//max = 512 car on trie pas plus de 500nbr
-	t_stack	a[MAX_NBR];
-	t_meta	ssa;
-	t_meta	ssb; //meta donnees sur les stacks. head et size
-	int		n_elem; //nbr reel
-	t_main	s;
+	int n_elem;
 
-	s.i = 0;
-	while (s.i < n_elem)
-		s.seen[s.i++] = 0;
 	n_elem = 0;
+	s.i = MAX_NBR;
+	while (--s.i)
+		s.seen[s.i] = 0;
 	s.i = 0;
 	while (++s.i < ac)
 	{
@@ -54,7 +49,7 @@ int main(int ac, char **av)
 			{
 				s.sentinel = ft_atoi(&av[s.i], av[s.i], 10);
 				if (s.sentinel == 0xffffffffffffffff)
-					return (write(1, "error", 5));
+					return (0xffffffffffffffff);
 				else
 					b[n_elem++].val = (int)s.sentinel;
 			}
@@ -62,6 +57,21 @@ int main(int ac, char **av)
 				break ;
 		}
 	}
+	return (n_elem);
+}
+
+int main(int ac, char **av)
+{
+	t_stack	b[MAX_NBR];//max = 512 car on trie pas plus de 500nbr
+	t_stack	a[MAX_NBR];
+	t_meta	ssa;
+	t_meta	ssb; //meta donnees sur les stacks. head et size
+	int		n_elem; //nbr reel
+	t_main	s;
+
+	n_elem = fonct(s, b, ac, av);
+	if (n_elem == 0xffffffffffffffff)
+		return (write(1, "error", 5));
 	init_meta_data(&ssa, &ssb, n_elem);
 	if (normalizator(&s, n_elem, a, b))
 		return (write(1, "error", 5));
