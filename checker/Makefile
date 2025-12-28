@@ -6,7 +6,7 @@
 #    By: etaboure <etaboure@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/12/27 14:48:13 by etaboure          #+#    #+#              #
-#    Updated: 2025/12/28 15:48:11 by etaboure         ###   ########.fr        #
+#    Updated: 2025/12/28 17:23:22 by etaboure         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,10 +20,10 @@ SRC =	checker.c \
 		checker_utils.c \
 		GNL/get_next_line.c \
 		GNL/get_next_line_utils.c \
-		../push_swap/push_swap_helper.c \
-		../push_swap/push_swap_stk.c \
-		../push_swap/cocktail.c \
-		../push_swap/helper.c
+		../v3/helper2.c \
+		../v3/push_swap_stk.c \
+		../v3/cocktail.c \
+		../v3/helper.c
 
 #list of obj files
 OBJ = $(SRC:.c=.o)

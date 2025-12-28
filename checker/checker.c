@@ -6,47 +6,13 @@
 /*   By: etaboure <etaboure@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 09:59:44 by etaboure          #+#    #+#             */
-/*   Updated: 2025/12/28 16:57:57 by etaboure         ###   ########.fr       */
+/*   Updated: 2025/12/28 18:09:53 by etaboure         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GNL/get_next_line.h"
 #include "checker.h"
 #include <fcntl.h>
-
-static int	ft_still_number(char *s)
-{
-	while (*s)
-	{
-		if (*s >= '0' && *s <= '9')
-			return (1);
-		s++;
-	}
-	return (0);
-}
-
-static int	ft_atoi(char **s_ptr, char *s, int base)
-{
-	int		sign;
-	int		acc;
-
-	if (base > 10 || base < 2 || !s)
-		return (0);
-	sign = -1;
-	acc = 0;
-	while (*s == 32 && *s && (*s >= 8 || *s <= 13))
-		s++;
-	while (*s && (*s == '+' || *s == '-'))
-	{
-		if (*s == '-')
-			sign = 1;
-		s++;
-	}
-	while (*s && (*s >= '0' && *s <= '9'))//base <= 10 accepted
-		acc = acc * base - (*s++ - 48);
-	*s_ptr = s;
-	return (acc * sign);
-}
 
 int	full_stack_b(char **argv, int argc, int n_elem, t_stack *b)
 {
@@ -71,35 +37,35 @@ int	sort(char **sort_instr, t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 	int	i;
 
 	i = 0;
+	printf("head debut : %zu\n", ssa->head);
 	while (sort_instr[i])
 	{
-		if (ft_strstr(sort_instr[i], "pb"))
+		if (ft_strcmp(sort_instr[i], "pb\n") == 0)
 			pb(ssa, ssb, a, b);
-		if (ft_strstr(sort_instr[i], "pa"))
+		else if (ft_strcmp(sort_instr[i], "pa\n") == 0)
 			pa(ssa, ssb, a, b);
-		if (ft_strstr(sort_instr[i], "ss"))
+		else if (ft_strcmp(sort_instr[i], "ss\n") == 0)
 			ss(ssa, ssb, a, b);
-		if (ft_strstr(sort_instr[i], "sb"))
+		else if (ft_strcmp(sort_instr[i], "sb\n") == 0)
 			sb(ssb, b);
-		if (ft_strstr(sort_instr[i], "sa"))
+		else if (ft_strcmp(sort_instr[i], "sa\n") == 0)
 			sa(ssa, a);
-		if (ft_strstr(sort_instr[i], "rr"))
+		else if (ft_strcmp(sort_instr[i], "rr\n") == 0)
 			rr(ssa, ssb, a, b);
-		if (ft_strstr(sort_instr[i], "rrr"))
+		else if (ft_strcmp(sort_instr[i], "rrr\n") == 0)
 			rrr(ssa, ssb, a, b);
-		if (ft_strstr(sort_instr[i], "rrb"))
+		else if (ft_strcmp(sort_instr[i], "rrb\n") == 0)
 			rrb(ssb, b);
-		if (ft_strstr(sort_instr[i], "rb"))
+		else if (ft_strcmp(sort_instr[i], "rb\n") == 0)
 			rb(ssb, b)
-;		if (ft_strstr(sort_instr[i], "rra"))
+;		else if (ft_strcmp(sort_instr[i], "rra\n") == 0)
 			rra(ssa, a);
-		if (ft_strstr(sort_instr[i], "ra"))
+		else if (ft_strcmp(sort_instr[i], "ra\n") == 0)
 			ra(ssa, a);
 		i++;
 	}
-	printf("head : %zu\n",ssb->head);
-	printf("si 0 dans l'ordre : %d\n", isNot_sorted(*ssa, *ssb, a, b));
-	if (isNot_sorted(*ssa, *ssb, a, b))
+	printf("head fin : %zu\n", ssa->head);
+	if (not_sorted(*ssa, *ssb, a, b))
 		return (1);
 	return (0);
 }
@@ -144,7 +110,7 @@ int	main(int argc, char **argv)
 	init(n_elem, a, b);
 	k = 0;
 	// if (argc == 1)
-	// 	return (0);
+	// 	return (0);	
 	sort_instr[k] = get_next_line(0);
 	while (sort_instr[k])
 		sort_instr[++k] = get_next_line(0);
