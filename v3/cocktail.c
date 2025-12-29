@@ -111,6 +111,8 @@ void	aller_retour(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 
 void	cocktail(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 {
+	ssa->top_phys = ssa->head;
+	ssb->top_phys = ssb->head;
 	ssa->start_l = ssa->head;
 	if (!(isNot_sorted(*ssa, *ssb, a, b)))
 		return ;
