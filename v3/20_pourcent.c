@@ -49,8 +49,7 @@ static char	up_or_down(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
 			count++;
 			ssa.head = a[ssa.head].next;
 		}
-		if (count >= ssa.size / 2)
-			return (1);
+		return (count >= (ssa.size / 2));
 	}
 	else
 	{
@@ -59,33 +58,86 @@ static char	up_or_down(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
 			count++;
 			ssb.head = b[ssb.head].next;
 		}
-		if (count >= ssb.size / 2)
-			return (1);
+		return (count >= (ssb.size / 2));
 	}
-	return (0);
+}
+
+char	find_smallest_bigger_inA(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
+{
+	short 	count;
+	ssize_t	lenght;
+
+	count = 0;
+	lenght = ssa.size;
+	if (ssa.size == 0)
+		return (0);
+	while (lenght-- > 0)
+	{
+		if (a[ssa.head].val < ssb.target && 
+				ssb.target < a[a[ssa.head].next].val)
+				break ;
+		ssa.head = a[ssa.head].next;
+		count++;
+	}
+	return (count >= ssa.size / 2);
+}
+
+static void	insert(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
+{
+	char	bol;
+	ssize_t	lenght;
+
+	lenght = ssa->size;
+	while (ssb->size)
+	{
+		ssb->target = b[ssb->head].val; //on veut trouver ou inserer target
+		bol = find_smallest_bigger_inA(*ssa, *ssb, a, b);
+		while (lenght-- > 0)
+		{
+			//ft_print_stack(*ssa, *ssb, a, b);
+			if (a[ssa->head].val < ssb->target && 
+				ssb->target < a[a[ssa->head].next].val)
+				break ;
+			if (bol)
+				ssa->count += rra(ssa, a);
+			else
+				ssa->count += ra(ssa, a);
+		}
+		ssa->count += ra(ssa, a);
+		ssa->count += pa(ssa, ssb, a ,b);
+	}
 }
 
 void	vingt_pour_100(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 {
-	char	direction;
+	char	bol;
 
 	ssa->count = 0;
 	ssa->start_l = ssa->head;
 	ssa->end_l = a[ssa->head].prev;
-	printf("end : %zu\n",ssa->end_l );
-	printf("dis:%.10f\n", desorder(*ssa, *ssb, a, b));
-	while (ssa->head != ssa->end_l && desorder(*ssa, *ssb, a, b) != 0)
+	while (ssa->head != ssa->end_l && desorder(*ssa, *ssb, a, b) != 0 )
 	{
 		if (a[ssa->head].val > a[a[ssa->head].next].val)
 		{
-			ssa->count += pb(ssa, ssb, a, b);
+			if (a[a[ssa->head].prev].val > a[ssa->head].val)
+				ssa->count += pb(ssa, ssb, a, b);
+			ssa->count += ra(ssa, a);
 		}
+		else if (a[a[ssa->head].prev].val > a[ssa->head].val)
+			ssa->count += pb(ssa, ssb, a, b);
 		else
 			ssa->count += ra(ssa, a);
 	}
-	ra(ssa, a);
-	//ssa->head = ssa->start_l;
+	ssa->count += ra(ssa, a);
 	ft_print_stack(*ssa, *ssb, a, b);
-
-	printf("dis:%.10f\n", desorder(*ssa, *ssb, a, b));
+	insert(ssa, ssb, a, b);
+	ssb->target = 0;
+	bol = find_smallest_bigger_inA(*ssa, *ssb, a, b);
+	while (a[ssa->head].val != 0)
+	{
+		if (bol)
+			ssa->count += rra(ssa, a);
+		else
+			ssa->count += ra(ssa, a);
+	}
 }

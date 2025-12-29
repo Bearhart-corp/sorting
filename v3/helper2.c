@@ -79,10 +79,11 @@ void	ft_push_swap(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 	}
 	else
 	{
+		ft_print_stack(*ssa, *ssb, a, b);
 		vingt_pour_100(ssa, ssb, a, b);
 		//cocktail(ssa, ssb, a, b);
 	}
 	ssa->start_l = ssa->head;
 	printf("\n\tcost: %zu\n", ssa->count);
-	// ft_print_stack(*ssa, *ssb, a, b);
+	ft_print_stack(*ssa, *ssb, a, b);
 }
