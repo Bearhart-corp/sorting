@@ -23,6 +23,7 @@
 typedef struct s_meta
 {
 	size_t		size;
+	size_t		target;
 	size_t		head;
 	size_t		count;
 	size_t		odd;
@@ -75,6 +76,7 @@ size_t	ra(t_meta *ssa, t_stack *a);
 /////////
 
 ///////// algo de tri
+void	vingt_pour_100(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b);
 void	cocktail(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b);
 void	algo_3move(t_meta *ssa, t_stack *a);
 void	ft_push_swap(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b);

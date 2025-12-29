@@ -29,14 +29,12 @@ int	isNot_sorted(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
 			i = 1;
 		ssb.top_phys = b[ssb.top_phys].next;
 	}
-	return (i); //0 = is sorted
+	return (i);
 }
 
 void	ft_print_stack(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
 {
 	printf("\n\tETAT STACK A\n\n");
-	ssa.head = ssa.start_l;
-	ssb.head = ssb.start_l;
 	for(int p = 0; p < ssa.size; p++)
 	{
 		printf("\t[%zu]", ssa.head);
