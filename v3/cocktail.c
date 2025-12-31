@@ -19,7 +19,7 @@ static size_t	ft_cut_in2(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 
 	count  = 0;
 	i = ssa->size;
-	while (ssa->size > ((i / 2) + ssa->odd) && ssb->size < (i / 2))
+	while (ssa->size > ((i / 2) + ssa->odd))
 	{
 		if (a[ssa->head].val < (i / 2))
 			count += pb(ssa, ssb, a, b); 

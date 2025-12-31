@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "push_swap.h"
+#include <time.h>
 
 static int normalizator(t_main *s, int n_elem, t_stack *a, t_stack *b)
 {

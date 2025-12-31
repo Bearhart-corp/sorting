@@ -12,13 +12,6 @@
 
 #include "push_swap.h"
 
-//Valeurs partager:
-
-	//struct : size			:	nb_element actuel
-	//struct : head			:	index du top de la stack
-	//struct : *free		:	list free
-	//struct : ifree		:	index en cours de free pour acces O/1
-
 size_t	ra(t_meta *ssa, t_stack *a)//le premier devient le dernier, move vers le haut
 {
 	ssa->head = a[ssa->head].next;

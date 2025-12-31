@@ -12,6 +12,32 @@
 
 #include "push_swap.h"
 
+float	desorder(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
+{
+	float 	mistake;
+	float	total_pairs;
+	int		i;
+	int		j;
+
+	i = ssa.head;
+	ssa.end_l = a[i].prev;
+	mistake = 0;
+	total_pairs = 0;
+	while (i != ssa.end_l)
+	{
+		j = a[i].next;
+		while (j != ssa.end_l)
+		{
+			total_pairs++;
+			if (a[i].val > a[j].val)
+				mistake++;
+			j = a[j].next;
+		}
+		i = a[i].next;
+	}
+	return (((mistake / total_pairs)));
+}
+
 int	isNot_sorted(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
 {
 	int i;

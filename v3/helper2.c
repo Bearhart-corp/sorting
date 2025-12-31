@@ -12,24 +12,27 @@
 
 #include "push_swap.h"
 
-void	algo_3move(t_meta *ssa, t_stack *a)
+char	up_or_down(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
 {
-	if (a[ssa->head].val > a[a[ssa->head].next].val
-		&& a[ssa->head].val > a[a[a[ssa->head].next].next].val)
+	short	count;
+
+	if (ssa.flag == 'a')
 	{
-		ra(ssa, a);
-		ssa->count++;
+		while (a[ssa.head].val != ssa.target)
+		{
+			count++;
+			ssa.head = a[ssa.head].next;
+		}
+		return (count >= (ssa.size / 2));//rra = 1
 	}
-	else if (a[a[ssa->head].next].val >
-		a[a[a[ssa->head].next].next].val)
+	else
 	{
-		rra(ssa, a);
-		ssa->count++;
-	}
-	if (a[ssa->head].val > a[a[ssa->head].next].val)
-	{
-		sa(ssa, a);	
-		ssa->count++;
+		while (b[ssb.head].val != ssa.target)
+		{
+			count++;
+			ssb.head = b[ssb.head].next;
+		}
+		return (count >= (ssb.size / 2));
 	}
 }
 
@@ -57,6 +60,7 @@ void	init(int n_elem, t_stack *a, t_stack *b)
 void	init_meta_data(t_meta *ssa, t_meta *ssb, int n_elem)
 {
 	ssa->size = (size_t)n_elem;
+	ssa->n = (size_t)n_elem;
 	ssb->size = 0;
 	ssa->head = (size_t)(MAX_NBR - n_elem);
 	ssb->head = (size_t)MAX_NBR - 1;
@@ -72,18 +76,43 @@ void	init_meta_data(t_meta *ssa, t_meta *ssb, int n_elem)
 
 void	ft_push_swap(t_meta *ssa, t_meta *ssb, t_stack *a, t_stack *b)
 {
+	//cette fonction sert a rediriger vers le bon algo en fonction
+	//du flag lors de la compil ou du % de desordre
 	if (ssa->size < 4)
 	{
-		algo_3move(ssa, a);
+		algo_2move(ssa, a);
 		ssa->start_l = ssa->head;
 	}
 	else
 	{
-		ft_print_stack(*ssa, *ssb, a, b);
-		vingt_pour_100(ssa, ssb, a, b);
+		quick_turk(ssa, ssb, a, b);
 		//cocktail(ssa, ssb, a, b);
 	}
 	ssa->start_l = ssa->head;
 	printf("\n\tcost: %zu\n", ssa->count);
 	ft_print_stack(*ssa, *ssb, a, b);
 }
+/*
+#!/bin/bash
+
+# Nombre total de nombres
+total=500
+
+# Pourcentage de désordre (ici 15%)
+disorder_count=75  # 15% de 500 est 75
+
+# Générer une liste ordonnée de nombres
+seq 1 $total > list.txt
+
+# Mélanger 75 nombres
+shuf -n $disorder_count list.txt > disorder.txt
+
+# Conserver le reste dans l'ordre
+head -n $((total - disorder_count)) list.txt > ordered.txt
+
+# Combiner les listes mélangées et ordonnées
+cat disorder.txt ordered.txt > final_list.txt
+
+# Afficher la liste finale
+cat final_list.txt
+*/
