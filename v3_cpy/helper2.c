@@ -16,6 +16,7 @@ char	up_or_down(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
 {
 	short	count;
 
+	count = 0;
 	if (ssa.flag == 'a')
 	{
 		while (a[ssa.head].val != ssa.target)
@@ -23,11 +24,11 @@ char	up_or_down(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
 			count++;
 			ssa.head = a[ssa.head].next;
 		}
-		return (count >= (ssa.size / 2));//rra = 1
+		return (count >= (ssa.size / 2));
 	}
 	else
 	{
-		while (b[ssb.head].val != ssa.target)
+		while (b[ssb.head].val != ssb.target)
 		{
 			count++;
 			ssb.head = b[ssb.head].next;
