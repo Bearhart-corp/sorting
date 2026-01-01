@@ -87,4 +87,6 @@ int main(int ac, char **av)
         (end.tv_nsec - start.tv_nsec) / 1e9;
 
     printf("Temps écoulé : %.9f s\n", elapsed);
+    printf("count  = %zu\n", ssa.count );
+    ft_print_stack(ssa, ssb, a, b);
 }
