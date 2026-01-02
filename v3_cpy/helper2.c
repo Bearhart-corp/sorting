@@ -12,30 +12,7 @@
 
 #include "push_swap.h"
 
-char	up_or_down(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
-{
-	short	count;
 
-	count = 0;
-	if (ssa.flag == 'a')
-	{
-		while (a[ssa.head].val != ssa.target)
-		{
-			count++;
-			ssa.head = a[ssa.head].next;
-		}
-		return (count >= (ssa.size / 2));
-	}
-	else
-	{
-		while (b[ssb.head].val != ssb.target)
-		{
-			count++;
-			ssb.head = b[ssb.head].next;
-		}
-		return (count >= (ssb.size / 2));
-	}
-}
 
 void	init(int n_elem, t_stack *a, t_stack *b)
 {

@@ -17,7 +17,7 @@
 # include <stdint.h>
 # include <stdlib.h>
 # ifndef MAX_NBR
-#  define MAX_NBR 0x200 //max (4095)
+#  define MAX_NBR 0x800 //max (4095)
 # endif
 
 typedef struct s_meta
@@ -65,7 +65,7 @@ int		ft_still_number(char *s);
 int		find_smallest_bigger_inA(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b);
 float	desorder(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b);
 int		isNot_sorted(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b);
-char	up_or_down(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b);
+int		up_or_down(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b);
 //warning need ssa->flag = 'a' ou 'b';
 
 ///////// stack helper

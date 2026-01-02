@@ -32,7 +32,7 @@ int	find_smallest_bigger_inA(t_meta ssa, t_meta ssb, t_stack *a, t_stack *b)
 	flag = 0;
 	while (ssa.size-- > 0)
 	{
-		if (a[ssa.head].val > b[ssb.head].val)
+		if (a[ssa.head].val > ssb.target)
 		{
 			if (a[ssa.head].val < value)
 				value = a[ssa.head].val;
